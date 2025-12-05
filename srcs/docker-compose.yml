@@ -26,16 +26,22 @@ services:
   #     - DUMMY_PLACEHOLDER=true
   #   restart: always
 
-  # mariadb:
-  #   build: ./requirements/mariadb
-  #   container_name: mariadb
-  #   networks:
-  #     - inception
-  #   volumes:
-  #     - mariadb_data:/var/lib/mysql
-  #   environment:
-  #     - DUMMY_PLACEHOLDER=true
-  #   restart: always
+  mariadb:
+    build: ./requirements/mariadb
+    container_name: mariadb
+    networks:
+      - inception
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD_FILE: /run/secrets/db_password
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+    secrets:
+      - db_root_password
+      - db_password    
+    restart: always
 
 volumes:
   wordpress_files:
@@ -45,12 +51,18 @@ volumes:
       device: /home/ndabbous/data/wordpress
       o: bind
 
-  # mariadb_data:
-  #   driver: local
-  #   driver_opts:
-  #     type: none
-  #     device: /home/ndabbous/data/mariadb
-  #     o: bind
+  mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/ndabbous/data/mariadb
+      o: bind
+
+secrets:
+  db_root_password:
+    file: ../secrets/db_root_password.txt
+  db_password:
+    file: ../secrets/db_password.txt
 
 networks:
   inception:

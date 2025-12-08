@@ -133,12 +133,13 @@ docker-compose rm
 docker-compose images
 
 
-
+docker compose -f srcs/docker-compose.yml build --no-cache mariadb
 
 
 docker compose -f srcs/docker-compose.yml down -v
 
 docker compose -f srcs/docker-compose.yml up --build -d
+
 
 
 mariadb testing: 

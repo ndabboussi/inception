@@ -131,3 +131,15 @@ docker-compose rm
 
 ## Lister les images utilisées dans le docker-compose.yml
 docker-compose images
+
+
+
+
+
+docker compose -f srcs/docker-compose.yml down -v
+
+docker compose -f srcs/docker-compose.yml up --build -d
+
+
+mariadb testing: 
+docker exec -it mariadb mysql -u root -p

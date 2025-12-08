@@ -3,25 +3,21 @@ FROM debian:bookworm
 # Install MariaDB server
 RUN	apt update -y && \
 	apt upgrade -y && \
-	apt-get install mariadb-server -y
-
-
-RUN apt update && \
-	apt install -y mariadb-server netcat && \
-	apt upgrade -y && \
+	apt-get install mariadb-server -y && \
 	apt clean && \
-	rm -rf /var/lib/apt/lists/* && \
-	mkdir -p /run/mysqld && \
-	chown mysql:mysql /run/mysqld
+	rm -rf /var/lib/apt/lists/*
 
-# COPY ./init_database.sh /init_database.sh
-# RUN chmod +x /init_database.sh
+
+RUN mkdir -p /run/mysqld && \
+	# chown mysql:mysql /run/mysqld
+	chown -R mysql:mysql /run/mysqld /var/lib/mysql
+
+COPY tools/init_database.sh /init_database.sh
+RUN chmod +x /init_database.sh
 
 EXPOSE 3306
 
 ENTRYPOINT ["/init_database.sh"]
-
-
 
 
 

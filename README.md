@@ -148,4 +148,17 @@ docker exec -it mariadb mysql -u root -p
 
 
 SHOW DATABASES;
-SELECT User, Host FROM mysql.user;
+SELECT User, Host FROM mysql.user;\
+
+
+Pour l’arrêter :    
+docker-compose -f  srcs/docker-compose.yml  stop
+
+Pour supprimer le build :    
+docker-compose -f  srcs/docker-compose.yml  down -v
+
+Si vous rencontrez des problèmes avec docker vous pouvez utiliser la commande :
+
+docker system prune -af
+
+Attention, ça supprime tous les container, images, etc.

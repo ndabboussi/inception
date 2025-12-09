@@ -15,17 +15,6 @@ services:
     env_file:
       - .env
 
-  # wordpress:
-  #   build: ./requirements/wordpress
-  #   container_name: wordpress
-  #   networks:
-  #     - inception
-  #   volumes:
-  #     - wordpress_files:/var/www/wordpress
-  #   environment:
-  #     - DUMMY_PLACEHOLDER=true
-  #   restart: always
-
   mariadb:
     build: ./requirements/mariadb
     container_name: mariadb
@@ -42,6 +31,32 @@ services:
       - db_root_password
       - db_password    
     restart: always
+
+  wordpress:
+    build: ./requirements/wordpress
+    container_name: wordpress
+    networks:
+      - inception
+    volumes:
+      - wordpress_files:/var/www/wordpress
+    environment:
+      WP_TITLE: ${WP_TITLE}
+      WP_USER: ${WP_USER}
+      WP_ADMIN: ${WP_ADMIN}
+
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_HOST: mariadb
+      WP_URL: ${DOMAIN_NAME}
+      # WP_ADMIN_USER: ${WP_ADMIN_USER}
+      WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
+      WP_USER_EMAIL: ${WP_USER_EMAIL}
+    # secrets:
+    #   - wp_admin_password
+    #   - wp_user_password
+    #   - db_password
+    restart: always
+
 
 volumes:
   wordpress_files:

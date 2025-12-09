@@ -27,45 +27,43 @@ if [ -z "$MYSQL_ROOT_PASSWORD" ]; then
     exit 1
 fi
 
+# ---------------------------------------------------------
+# 1) Start temporary MariaDB
+# ---------------------------------------------------------
 DB_DIR="/var/lib/mysql" #stores all db files (tables, logs, etc)
 
 echo "[INFO] Starting MariaDB initialization..."
+echo "[INFO] Initializing MariaDB data directory with mysql_install_db..."
+mysql_install_db --user=mysql --ldata="$DB_DIR"
 
-# ---------------------------------------------------------
-# 2) Secure initial database setup = Prepares a clean database ready to accept users and privileges.
-# ---------------------------------------------------------
-echo "[INFO] Initializing MariaDB data directory..."
-mysql_install_db --user=mysql --ldata="$DB_DIR" > /dev/null 2>&1
+mysqld_safe --datadir=/var/lib/mysql --skip-networking=0 &
 
-# ---------------------------------------------------------
-# 3) Apply SQL securely using --bootstrap
-# ---------------------------------------------------------
-echo "[INFO] Running initial SQL configuration..."
+echo "[INFO] Waiting for MariaDB to start..."
+while ! mysqladmin ping --silent; do
+    sleep 1
+done
+echo "[INFO] MariaDB temp started successfully."
 
-mariadbd --user=mysql --bootstrap <<EOF
--- Create root user with password
+# # ---------------------------------------------------------
+# # 2) Run database creation using a HEREDOC
+# # ---------------------------------------------------------
+
+echo "[INFO] Running mysqld in bootstrap mode to create database & users..."
+
+# mysqld --user=mysql --bootstrap
+
+mysql --user=root -p$MYSQL_ROOT_PASSWORD <<EOF
+CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;
+CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
+GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%';
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
 
--- Create WordPress DB
-CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;
-
--- Create WordPress user
-CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
-
--- Grant privileges
-GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%';
-
--- Apply changes
 FLUSH PRIVILEGES;
 EOF
 
-mysqladmin shutdown 
-echo "[INFO] Initialization done."
+echo "[INFO] Shutting down bootstrap server..."
+mysqladmin --user=root --password="${MYSQL_ROOT_PASSWORD}" shutdown || true
 
-# ---------------------------------------------------------
-# 4) Start MariaDB normally
-# ---------------------------------------------------------
-# exec mysqld_safe
-
-echo "[INFO] Starting MariaDB in the foreground..."
+echo "[INFO] Starting MariaDB in safe mode..."
 exec mysqld_safe --port=3306 --bind-address=0.0.0.0
+# exec mysqld_safe --datadir="$DB_DIR"

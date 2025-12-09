@@ -144,3 +144,8 @@ docker compose -f srcs/docker-compose.yml up --build -d
 
 mariadb testing: 
 docker exec -it mariadb mysql -u root -p
+
+
+
+SHOW DATABASES;
+SELECT User, Host FROM mysql.user;

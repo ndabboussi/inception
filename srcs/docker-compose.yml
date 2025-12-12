@@ -86,5 +86,4 @@ secrets:
 
 networks:
   inception:
-    name: inception
     driver: bridge

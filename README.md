@@ -202,6 +202,8 @@ Inside the nginx container:
         apt update && apt install -y curl
         curl http://wordpress:9000
 
+        nc -vz wordpress 9000
+
 
 If php-fpm responds, you get something like:
 

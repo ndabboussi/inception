@@ -148,7 +148,7 @@ docker exec -it mariadb mysql -u root -p
 
 
 SHOW DATABASES;
-SELECT User, Host FROM mysql.user;\
+SELECT User, Host FROM mysql.user;
 
 
 Pour l’arrêter :    
@@ -162,3 +162,95 @@ Si vous rencontrez des problèmes avec docker vous pouvez utiliser la commande :
 docker system prune -af
 
 Attention, ça supprime tous les container, images, etc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TEST WORDPRESS
+docker exec -it wordpress bash
+
+Inside:
+
+ps aux | grep php-fpm
+
+You MUST see:
+
+php-fpm: master process
+php-fpm: pool www
+php-fpm: pool www
+
+Also check the socket/port:
+
+netstat -tulpn | grep php
+
+Expected (port):
+
+tcp   LISTEN   0 0 127.0.0.1:9000   php-fpm
+
+
+✅ 3. Check that Nginx can reach php-fpm
+
+Inside the nginx container:
+
+docker exec -it nginx bash
+apt update && apt install -y curl
+curl http://wordpress:9000
+
+
+If php-fpm responds, you get something like:
+
+File not found.
+
+
+docker exec -it wordpress ps aux
+
+Also check port:
+
+docker exec -it wordpress ss -tlnp
+
+
+You should see something like:
+
+LISTEN 0  128 0.0.0.0:9000  ...
+
+
+2️⃣ Check Docker network
+
+Make sure nginx can resolve wordpress:
+
+docker exec -it nginx ping wordpress
+
+
+Expected:
+
+PING wordpress (172.x.x.x) ...
+
+
+If it fails → network config issue.
+
+
+3️⃣ Test connection from nginx to WordPress container
+docker exec -it nginx bash
+apt update && apt install -y curl
+curl -v http://wordpress:9000
+
+
+If you get connection refused → php-fpm is not listening on TCP
+
+If you get some response → php-fpm works, problem is nginx config

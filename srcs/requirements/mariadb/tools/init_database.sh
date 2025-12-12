@@ -50,8 +50,6 @@ echo "[INFO] MariaDB temp started successfully."
 
 echo "[INFO] Running mysqld in bootstrap mode to create database & users..."
 
-# mysqld --user=mysql --bootstrap
-
 mysql --user=root -p$MYSQL_ROOT_PASSWORD <<EOF
 CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;
 CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';

@@ -1,9 +1,11 @@
+#NGINX
 FROM debian:bookworm
 
 # Install nginx and openssl
 RUN apt-get update && apt-get install -y \
     nginx \
     openssl \
+    && apt update && apt install -y curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Create SSL directory

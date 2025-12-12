@@ -35,10 +35,6 @@ services:
 
   wordpress:
     build: ./requirements/wordpress
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:9000"]
-    #   interval: 5s
-    #   retries: 5
     container_name: wordpress
     image: wordpress
     networks:
@@ -90,4 +86,5 @@ secrets:
 
 networks:
   inception:
+    name: inception
     driver: bridge

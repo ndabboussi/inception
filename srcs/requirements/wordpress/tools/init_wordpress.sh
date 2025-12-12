@@ -90,7 +90,9 @@ user = www-data
 group = www-data
 
 listen = 0.0.0.0:9000
-listen.allowed_clients = 0.0.0.0
+listen.owner = www-data
+listen.group = www-data
+listen.mode = 0666
 
 pm = dynamic
 pm.max_children = 5

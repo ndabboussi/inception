@@ -157,11 +157,8 @@ docker-compose -f  srcs/docker-compose.yml  stop
 Pour supprimer le build :    
 docker-compose -f  srcs/docker-compose.yml  down -v
 
-Si vous rencontrez des problèmes avec docker vous pouvez utiliser la commande :
-
-docker system prune -af
-
-Attention, ça supprime tous les container, images, etc.
+docker system prune -af 
+SUPPRIME TOUT
 
 
 
@@ -184,33 +181,26 @@ Attention, ça supprime tous les container, images, etc.
 
 TEST WORDPRESS
 docker exec -it wordpress bash
+    ps aux | grep php-fpm
 
-Inside:
+        You MUST see:
 
-ps aux | grep php-fpm
+        php-fpm: master process
+        php-fpm: pool www
+        php-fpm: pool www
 
-You MUST see:
-
-php-fpm: master process
-php-fpm: pool www
-php-fpm: pool www
-
-Also check the socket/port:
-
-netstat -tulpn | grep php
-
-Expected (port):
-
-tcp   LISTEN   0 0 127.0.0.1:9000   php-fpm
+    netstat -tulpn | grep php
+        Expected (port):
+        tcp   LISTEN   0 0 127.0.0.1:9000   php-fpm
 
 
 ✅ 3. Check that Nginx can reach php-fpm
 
 Inside the nginx container:
 
-docker exec -it nginx bash
-apt update && apt install -y curl
-curl http://wordpress:9000
+    docker exec -it nginx bash
+        apt update && apt install -y curl
+        curl http://wordpress:9000
 
 
 If php-fpm responds, you get something like:

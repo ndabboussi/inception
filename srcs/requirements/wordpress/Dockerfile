@@ -4,6 +4,7 @@ FROM debian:bookworm
 RUN apt update && apt install -y \
     php8.2-fpm php8.2-mysql php-curl php-gd php-xml php-mbstring php-zip \
     && apt-get -y install wget curl mariadb-client less ca-certificates \
+    && apt update && apt install -y net-tools \
     && apt clean && rm -rf /var/lib/apt/lists/*
 
 # Install WP-CLI

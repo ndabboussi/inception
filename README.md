@@ -135,9 +135,6 @@ docker-compose images
 
 docker compose -f srcs/docker-compose.yml build --no-cache mariadb
 
-
-docker compose -f srcs/docker-compose.yml down -v
-
 docker compose -f srcs/docker-compose.yml up --build -d
 
 Pour l’arrêter :    
@@ -146,45 +143,22 @@ docker-compose -f  srcs/docker-compose.yml  stop
 Pour supprimer le build :    
 docker-compose -f  srcs/docker-compose.yml  down -v
 
-docker system prune -af 
 SUPPRIME TOUT
+docker system prune -af 
 
+TEST MARIADB
 
-
-mariadb testing: 
     docker exec -it mariadb mysql -u root -p
         SHOW DATABASES;
         SELECT User, Host FROM mysql.user;
 
         USE wordpress;
-        SELECT comment_ID, comment_post_ID, comment_author, comment_content, comment_approved
-        FROM wp_comments;
+        SELECT comment_ID, comment_post_ID, comment_author, comment_content, comment_approved FROM wp_comments;
 
         UPDATE wp_comments SET comment_approved = 1;
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 TEST WORDPRESS
+
 docker exec -it wordpress bash
     ps aux | grep php-fpm
 
@@ -198,10 +172,22 @@ docker exec -it wordpress bash
         Expected (port):
         tcp   LISTEN   0 0 127.0.0.1:9000   php-fpm
 
+    docker exec -it wordpress wp user list --path=/var/www/wordpress --allow-root
 
-✅ 3. Check that Nginx can reach php-fpm
+    docker exec -it wordpress ps aux
+    docker exec -it wordpress ss -tlnp
 
-Inside the nginx container:
+    docker exec -it wordpress wp comment create \
+  --path=/var/www/wordpress \
+  --comment_post_ID=1 \
+  --comment_author="Test User" \
+  --comment_author_email="test@example.com" \
+  --comment_content="This is a test comment from WP-CLI" \
+  --user=Nina \
+  --allow-root
+
+
+TEST NGINX
 
     docker exec -it nginx bash
         apt update && apt install -y curl
@@ -209,45 +195,9 @@ Inside the nginx container:
 
         nc -vz wordpress 9000
 
+    docker exec -it nginx ss -tlnp
 
-If php-fpm responds, you get something like:
+CONNEXION
 
-File not found.
-
-
-docker exec -it wordpress ps aux
-
-Also check port:
-
-docker exec -it wordpress ss -tlnp
-
-
-You should see something like:
-
-LISTEN 0  128 0.0.0.0:9000  ...
-
-
-2️⃣ Check Docker network
-
-Make sure nginx can resolve wordpress:
-
-docker exec -it nginx ping wordpress
-
-
-Expected:
-
-PING wordpress (172.x.x.x) ...
-
-
-If it fails → network config issue.
-
-
-3️⃣ Test connection from nginx to WordPress container
-docker exec -it nginx bash
-apt update && apt install -y curl
-curl -v http://wordpress:9000
-
-
-If you get connection refused → php-fpm is not listening on TCP
-
-If you get some response → php-fpm works, problem is nginx config
+sudo ss -tlnp | grep 4403
+curl -vk https://localhost:PORTNB

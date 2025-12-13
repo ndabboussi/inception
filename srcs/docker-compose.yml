@@ -8,7 +8,6 @@ services:
       - "443:443"
     volumes:
       - wordpress_files:/var/www/wordpress
-      - ./requirements/nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro
     networks:
       - inception
     depends_on:

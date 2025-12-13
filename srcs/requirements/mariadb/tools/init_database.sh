@@ -4,8 +4,8 @@ set -e
 DB_DIR="/var/lib/mysql"
 MYSQL_ROOT_PASSWORD="$(cat /run/secrets/db_root_password)"
 MYSQL_PASSWORD="$(cat /run/secrets/db_password)"
-MYSQL_DATABASE="${MYSQL_DATABASE:-wordpress}"
-MYSQL_USER="${MYSQL_USER:-wp_user}"
+# MYSQL_DATABASE="${MYSQL_DATABASE:-wordpress}"
+# MYSQL_USER="${MYSQL_USER:-wp_user}"
 
 # Ensure data directory exists
 mkdir -p "$DB_DIR"

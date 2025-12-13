@@ -51,7 +51,7 @@ services:
       WP_DATABASE: ${MYSQL_DATABASE}
       WP_DATABASE_USER: ${MYSQL_USER}
       WP_URL: ${DOMAIN_NAME}
-      MYSQL_HOST: mariadb
+      MYSQL_HOST: ${MYSQL_HOST}
     secrets:
       - wp_admin_password
       - wp_user_password

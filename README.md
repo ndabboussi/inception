@@ -140,17 +140,6 @@ docker compose -f srcs/docker-compose.yml down -v
 
 docker compose -f srcs/docker-compose.yml up --build -d
 
-
-
-mariadb testing: 
-docker exec -it mariadb mysql -u root -p
-
-
-
-SHOW DATABASES;
-SELECT User, Host FROM mysql.user;
-
-
 Pour l’arrêter :    
 docker-compose -f  srcs/docker-compose.yml  stop
 
@@ -159,6 +148,22 @@ docker-compose -f  srcs/docker-compose.yml  down -v
 
 docker system prune -af 
 SUPPRIME TOUT
+
+
+
+mariadb testing: 
+    docker exec -it mariadb mysql -u root -p
+        SHOW DATABASES;
+        SELECT User, Host FROM mysql.user;
+
+        USE wordpress;
+        SELECT comment_ID, comment_post_ID, comment_author, comment_content, comment_approved
+        FROM wp_comments;
+
+        UPDATE wp_comments SET comment_approved = 1;
+        
+
+
 
 
 
